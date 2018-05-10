@@ -23,12 +23,9 @@ exports.handler = async function (args) {
   const sequelize = getDatabaseLessSequelize();
   const config = helpers.config.readConfig();
 
-  console.log(`CREATE DATABASE ${args.ifNotExists ? 'IF NOT EXISTS' : ''} ${sequelize.getQueryInterface().quoteIdentifier(config.database)}`);
-
   await sequelize.query(`CREATE DATABASE ${args.ifNotExists ? 'IF NOT EXISTS' : ''} ${sequelize.getQueryInterface().quoteIdentifier(config.database)}`, {
     type: sequelize.QueryTypes.RAW
   }).catch(e => {
-    console.log(e.message);
     helpers.view.error(e);
   });
 
