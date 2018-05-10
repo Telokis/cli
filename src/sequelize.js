@@ -28,7 +28,8 @@ import seedOne from './commands/seed_one';
 import migrationGenerate from './commands/migration_generate';
 import modelGenerate from './commands/model_generate';
 import seedGenerate from './commands/seed_generate';
-import database from './commands/database';
+import databaseCreate from './commands/database_create';
+import databaseDrop from './commands/database_drop';
 
 import helpers from './helpers/index';
 
@@ -44,8 +45,8 @@ const cli = yargs
   .command('db:seed:undo', 'Deletes data from the database', seedOne)
   .command('db:seed:all', 'Run every seeder', seed)
   .command('db:seed:undo:all', 'Deletes data from the database', seed)
-  .command('db:create', 'Create database specified by configuration', database)
-  .command('db:drop', 'Drop database specified by configuration', database)
+  .command('db:create', 'Create database specified by configuration', databaseCreate)
+  .command('db:drop', 'Drop database specified by configuration', databaseDrop)
   .command('init', 'Initializes project', init)
   .command('init:config', 'Initializes configuration', init)
   .command('init:migrations', 'Initializes migrations', init)

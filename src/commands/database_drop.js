@@ -7,42 +7,31 @@ import clc from 'cli-color';
 
 const Sequelize = helpers.generic.getSequelize();
 
-exports.builder = yargs => _baseOptions(yargs).help().argv;
-exports.handler = async function (args) {
-  const command = args._[0];
+exports.builder = yargs => _baseOptions(yargs)
+  .option('if-exists', {
+    default: false,
+    type: 'boolean',
+    desc: 'Prevents error if database doesn\'t exists'
+  })
+  .help()
+  .argv;
 
+exports.handler = async function (args) {
   // legacy, gulp used to do this
   await helpers.config.init();
 
   const sequelize = getDatabaseLessSequelize();
   const config = helpers.config.readConfig();
 
-  switch (command) {
-    case 'db:create':
-      await sequelize.query(`CREATE DATABASE ${sequelize.getQueryInterface().quoteIdentifier(config.database)}`, {
-        type: sequelize.QueryTypes.RAW
-      }).catch(e => helpers.view.error(e));
+  await sequelize.query(`DROP DATABASE ${args.ifExists ? 'IF EXISTS' : ''} ${sequelize.getQueryInterface().quoteIdentifier(config.database)}`, {
+    type: sequelize.QueryTypes.RAW
+  }).catch(e => helpers.view.error(e));
 
-      helpers.view.log(
-        'Database',
-        clc.blueBright(config.database),
-        'created.'
-      );
-
-      break;
-    case 'db:drop':
-      await sequelize.query(`DROP DATABASE ${sequelize.getQueryInterface().quoteIdentifier(config.database)}`, {
-        type: sequelize.QueryTypes.RAW
-      }).catch(e => helpers.view.error(e));
-
-      helpers.view.log(
-        'Database',
-        clc.blueBright(config.database),
-        'dropped.'
-      );
-
-      break;
-  }
+  helpers.view.log(
+    'Database',
+    clc.blueBright(config.database),
+    'dropped.'
+  );
 
   process.exit(0);
 };
